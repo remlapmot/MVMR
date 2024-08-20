@@ -101,7 +101,7 @@ strhet_mvmr <- function(r_input, gencov) {
         #Generates the sigma2xj values for each exposure
         for (i in 1:exp.number) {
           se.temp <- as.matrix(sebetas[, -i])
-          for (j in 1:(exp.number-1)) {
+          for (j in 1:(exp.number - 1)) {
             sigma2xj_dat[, i] <- sigma2xj_dat[, i] + (se.temp[, j]^2 * delta_mat[j, i]^2)
           }
           sigma2xj_dat[, i] <- sigma2xj_dat[, i] + sebetas[, i]^2 - 0
@@ -112,7 +112,7 @@ strhet_mvmr <- function(r_input, gencov) {
 
             temp <- temp[-i]
 
-            for (l in seq_along(r_input[,1])) {
+            for (l in seq_along(r_input[, 1])) {
 
               sigma2xj_dat[l, i] <- sigma2xj_dat[l, i] - delta_mat[j, i] * 2 * gencov[[l]][i, temp[k]]
 

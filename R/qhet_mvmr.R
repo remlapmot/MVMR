@@ -59,11 +59,11 @@ qhet_mvmr <- function(r_input, pcor, CI, iterations) {
     PL_MVMR <- function(a) {
       tau2 <- a[1]
 
-      PL2_MVMR <- function(ab){
+      PL2_MVMR <- function(ab) {
         b <- ab
 
-        cov = matrix(nrow = exp.number, ncol = exp.number)
-        w = NULL
+        cov <- matrix(nrow = exp.number, ncol = exp.number)
+        w <- NULL
         for (l in seq_len(nrow(r_input))) {
           for (pp in 1:exp.number) {
             for (p2 in 1:exp.number) {
@@ -104,7 +104,7 @@ qhet_mvmr <- function(r_input, pcor, CI, iterations) {
 
     }
 
-    PL2_MVMR <- function(ab){
+    PL2_MVMR <- function(ab) {
       b <- ab
 
       w <- NULL
@@ -147,7 +147,7 @@ qhet_mvmr <- function(r_input, pcor, CI, iterations) {
     res <- Qtemp(r_input, pcor)
   }
 
-  if(CI == TRUE){
+  if (CI == TRUE) {
 
     bootse <- function(data, indices) {
 

@@ -21,7 +21,7 @@
 #' }
 #'
 
-pleiotropy_mvmr <- function(r_input, gencov = 0){
+pleiotropy_mvmr <- function(r_input, gencov = 0) {
 
   # convert MRMVInput object to mvmr_format
   if ("MRMVInput" %in% class(r_input)) {
@@ -75,7 +75,7 @@ pleiotropy_mvmr <- function(r_input, gencov = 0){
     # Generate Sigma^2_A values
     sigma2A <- r_input[, 3]^2
     for (i in 1:exp.number) {
-      sigma2A <- sigma2A + (A[i]^2 * sebetas[,i]^2)
+      sigma2A <- sigma2A + (A[i]^2 * sebetas[, i]^2)
     }
 
     #Create a subset of exposure effect estimates
@@ -95,7 +95,7 @@ pleiotropy_mvmr <- function(r_input, gencov = 0){
 
   }
 
-  if (length(gencov) >2) {
+  if (length(gencov) > 2) {
 
     # Generate Sigma^2_A values
     sigma2A <- r_input[, 3]^2
@@ -116,7 +116,7 @@ pleiotropy_mvmr <- function(r_input, gencov = 0){
     Q_valid <- sum ((1 / sigma2A) * (r_input[, 2] - temp.sub2)^2)
 
     #Calculates p_value for instrument validity
-    Q_chiValid <- stats::pchisq(Q_valid, length(r_input[, 2]) - exp.number - 1,lower.tail = FALSE)
+    Q_chiValid <- stats::pchisq(Q_valid, length(r_input[, 2]) - exp.number - 1, lower.tail = FALSE)
 
   }
 
