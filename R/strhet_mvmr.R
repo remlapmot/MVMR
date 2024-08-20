@@ -19,7 +19,7 @@
 #' strhet_mvmr(r_input, covariances)
 #' }
 
-strhet_mvmr<-function(r_input,gencov){
+strhet_mvmr <- function(r_input, gencov) {
 
   # convert MRMVInput object to mvmr_format
   if ("MRMVInput" %in% class(r_input)) {
@@ -27,31 +27,30 @@ strhet_mvmr<-function(r_input,gencov){
   }
 
   # Perform check that r_input has been formatted using format_mvmr function
-  if(!("mvmr_format" %in%
-       class(r_input))) {
+  if(!("mvmr_format" %in% class(r_input))) {
     stop('The class of the data object must be "mvmr_format", please resave the object with the output of format_mvmr().')
   }
 
   # Inverse variance weighting is used.
 
-  Wj<-1/r_input[,3]^2
+  Wj <- 1 / r_input[, 3]^2
 
-  if(missing(gencov)) {
-    gencov<-as.numeric(0)
+  if (missing(gencov)) {
+    gencov <- as.numeric(0)
     warning("Covariance between effect of genetic variants on each exposure not specified. Fixing covariance at 0.")
   }
 
   #Determine the number of exposures included in the model
 
-  exp.number<-length(names(r_input)[-c(1,2,3)])/2
+  exp.number <- length(names(r_input)[-c(1, 2, 3)]) / 2
 
-  A<-summary(stats::lm(stats::as.formula(paste("betaYG~ -1 +", paste(names(r_input)[
-    seq(4,3+exp.number,by=1)], collapse="+")))
-    ,weights=Wj,data=r_input))$coef
+  A <- summary(stats::lm(stats::as.formula(paste("betaYG~ -1 +", paste(names(r_input)[
+    seq(4, 3 + exp.number, by = 1)], collapse = "+")))
+    , weights = Wj, data = r_input))$coef
 
   #Rename the regressors for ease of interpretation
-  for(i in 1:exp.number){
-    dimnames(A)[[1]][i]<- paste0("exposure",i,collapse="")
+  for (i in 1:exp.number) {
+    dimnames(A)[[1]][i] <- paste0("exposure", i, collapse = "")
   }
 
   #############################################
@@ -61,62 +60,61 @@ strhet_mvmr<-function(r_input,gencov){
   #Create an empty matrix for delta value (coefficients regressing each set of exposure effects upon other
   #exposure effects)
 
-  delta_mat<-matrix(0,ncol=exp.number,nrow=exp.number-1)
+  delta_mat <- matrix(0, ncol = exp.number, nrow = exp.number - 1)
 
-  Q_strength<-matrix(ncol=exp.number,nrow=1,0)
+  Q_strength <- matrix(ncol = exp.number, nrow = 1, 0)
 
-  qminvec<-NULL
+  qminvec <- NULL
 
-  valvec<-utils::combn(-100:100,c(exp.number-1))
+  valvec <- utils::combn(-100:100, c(exp.number - 1))
 
-  for(m in 1:exp.number){
+  for (m in 1:exp.number) {
 
-    qmin<-function(a){
+    qmin <- function(a) {
 
-      delta_mat[,m]<-valvec[a]
+      delta_mat[, m] <- valvec[a]
 
-      sigma2xj_dat<-matrix(ncol=exp.number,nrow=length(r_input[,1]),0)
+      sigma2xj_dat <- matrix(ncol = exp.number, nrow = length(r_input[, 1]), 0)
 
-      if(length(gencov) > 0){
+      if (length(gencov) > 0) {
 
         #Create a subset containing only standard errors for exposure effect estimates
-        sebetas<-r_input[,(exp.number + 4):length(r_input)]
+        sebetas <- r_input[, (exp.number + 4):length(r_input)]
 
         #Generates the sigma2xj values for each exposure
-        for(i in 1:exp.number){
-          se.temp<-as.matrix(sebetas[,-i])
-          for(j in 1:(exp.number-1)){
-            sigma2xj_dat[,i]<- sigma2xj_dat[,i] + (se.temp[,j]^2 * delta_mat[j,i]^2)
+        for (i in 1:exp.number) {
+          se.temp <- as.matrix(sebetas[, -i])
+          for (j in 1:(exp.number - 1)) {
+            sigma2xj_dat[, i] <- sigma2xj_dat[, i] + (se.temp[, j]^2 * delta_mat[j, i]^2)
           }
-          sigma2xj_dat[,i]<- sigma2xj_dat[,i] + sebetas[,i]^2
+          sigma2xj_dat[, i] <- sigma2xj_dat[, i] + sebetas[, i]^2
 
         }
 
-
       }
 
-      if(length(gencov) > 2){
+      if (length(gencov) > 2) {
 
         #Create a subset containing only standard errors for exposure effect estimates
-        sebetas<-r_input[,(exp.number + 4):length(r_input)]
+        sebetas <- r_input[, (exp.number + 4):length(r_input)]
 
         #Generates the sigma2xj values for each exposure
-        for(i in 1:exp.number){
-          se.temp<-as.matrix(sebetas[,-i])
-          for(j in 1:(exp.number-1)){
-            sigma2xj_dat[,i]<- sigma2xj_dat[,i] + (se.temp[,j]^2 * delta_mat[j,i]^2)
+        for (i in 1:exp.number) {
+          se.temp <- as.matrix(sebetas[, -i])
+          for (j in 1:(exp.number-1)) {
+            sigma2xj_dat[, i] <- sigma2xj_dat[, i] + (se.temp[, j]^2 * delta_mat[j, i]^2)
           }
-          sigma2xj_dat[,i]<- sigma2xj_dat[,i] + sebetas[,i]^2 - 0
+          sigma2xj_dat[, i] <- sigma2xj_dat[, i] + sebetas[, i]^2 - 0
 
-          for(k in 1:(exp.number-1)){
+          for (k in 1:(exp.number - 1)) {
 
-            temp<-seq(1:exp.number)
+            temp <- seq(1:exp.number)
 
-            temp<-temp[-i]
+            temp <- temp[-i]
 
-            for(l in 1:length(r_input[,1])){
+            for (l in seq_along(r_input[,1])) {
 
-              sigma2xj_dat[l,i]<- sigma2xj_dat[l,i] - delta_mat[j,i]*2*gencov[[l]][i,temp[k]]
+              sigma2xj_dat[l, i] <- sigma2xj_dat[l, i] - delta_mat[j, i] * 2 * gencov[[l]][i, temp[k]]
 
             }
 
@@ -126,19 +124,18 @@ strhet_mvmr<-function(r_input,gencov){
 
       }
 
-
       #Generates the component of the Q statistic to be subtracted from the exposure estimates
-      for(i in 1:exp.number){
-        betas<-r_input[,c(4:(3+exp.number))]
-        betas<-data.frame(betas[,-i])
+      for (i in 1:exp.number) {
+        betas <- r_input[, c(4:(3 + exp.number))]
+        betas <- data.frame(betas[, -i])
         temp.sub <- 0
-        for(j in 1:(exp.number-1)){
-          temp.sub<-temp.sub + (delta_mat[j,i] * betas[,j])
+        for (j in 1:(exp.number-1)) {
+          temp.sub <- temp.sub + (delta_mat[j, i] * betas[, j])
         }
 
         #Populates matrix of Q statistics with respect to instrument strength
-        Q_strength[i]<- sum( (1/sigma2xj_dat[,i]) * ((r_input[,3+i] - temp.sub)^2) )
-        Q_strength[i]<-Q_strength[i]/nrow(r_input)
+        Q_strength[i] <- sum( (1 / sigma2xj_dat[, i]) * ((r_input[, 3 + i] - temp.sub)^2) )
+        Q_strength[i] <- Q_strength[i] / nrow(r_input)
 
       }
 
@@ -146,15 +143,14 @@ strhet_mvmr<-function(r_input,gencov){
 
     }
 
-    qminvec[m] <- stats::optimize(qmin, interval = c(1,length(valvec)))$objective
+    qminvec[m] <- stats::optimize(qmin, interval = c(1, length(valvec)))$objective
 
   }
 
-  Q_strength<-data.frame(qminvec)
-  Q_strength<-data.frame(t(Q_strength))
-  names(Q_strength)<-dimnames(A)[[1]]
-  rownames(Q_strength)<-"F-statistic"
-
+  Q_strength <- data.frame(qminvec)
+  Q_strength <- data.frame(t(Q_strength))
+  names(Q_strength) <- dimnames(A)[[1]]
+  rownames(Q_strength) <- "F-statistic"
 
   ##########
   # Output #
