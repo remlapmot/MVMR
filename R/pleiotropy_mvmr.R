@@ -59,7 +59,7 @@ pleiotropy_mvmr <- function(r_input, gencov = 0) {
     , weights = Wj, data = r_input))$coef
 
   #Rename the regressors for ease of interpretation
-  for (i in 1:exp.number) {
+  for (i in seq_len(exp.number)) {
     dimnames(A)[[1]][i] <- paste0("exposure", i, collapse="")
   }
 
@@ -74,7 +74,7 @@ pleiotropy_mvmr <- function(r_input, gencov = 0) {
 
     # Generate Sigma^2_A values
     sigma2A <- r_input[, 3]^2
-    for (i in 1:exp.number) {
+    for (i in seq_len(exp.number)) {
       sigma2A <- sigma2A + (A[i]^2 * sebetas[, i]^2)
     }
 
@@ -83,7 +83,7 @@ pleiotropy_mvmr <- function(r_input, gencov = 0) {
 
     #Generates the component of the Q statistic to be subtracted from the outcome estimates
     temp.sub2 <- 0
-    for (i in 1:exp.number) {
+    for (i in seq_len(exp.number)) {
       temp.sub2 <- temp.sub2 + (betas[, i] * A[i])
     }
 
@@ -108,7 +108,7 @@ pleiotropy_mvmr <- function(r_input, gencov = 0) {
 
     #Generates the component of the Q statistic to be subtracted from the outcome estimates
     temp.sub2 <- 0
-    for (i in 1:exp.number) {
+    for (i in seq_len(exp.number)) {
       temp.sub2 <- temp.sub2 + (betas[, i] * A[i])
     }
 

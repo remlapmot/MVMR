@@ -65,8 +65,8 @@ qhet_mvmr <- function(r_input, pcor, CI, iterations) {
         cov <- matrix(nrow = exp.number, ncol = exp.number)
         w <- NULL
         for (l in seq_len(nrow(r_input))) {
-          for (pp in 1:exp.number) {
-            for (p2 in 1:exp.number) {
+          for (pp in seq_len(exp.number)) {
+            for (p2 in seq_len(exp.number)) {
               cov[pp, p2] <- correlation[pp, p2] * stderr[l, pp] * stderr[l, p2]
             }
           }

@@ -93,7 +93,7 @@ mvmr <- function(r_input, gencov, weights) {
     , weights = Wj, data = r_input))$coef
 
   #Rename the regressors for ease of interpretation
-  for (i in 1:exp.number) {
+  for (i in seq_len(exp.number)) {
     dimnames(A)[[1]][i] <- paste0("exposure", i, collapse = "")
   }
 
@@ -107,7 +107,7 @@ mvmr <- function(r_input, gencov, weights) {
   delta_mat <- matrix(0, ncol = exp.number, nrow = exp.number - 1)
 
   #Obtain delta values fitting regression models for each set of exposure effects upon other exposure effects
-  for (i in 1:exp.number) {
+  for (i in seq_len(exp.number)) {
     regressand <- names(r_input[3 + i])
     regressors <- names(r_input)[-c(1, 2, 3,
                                   4 + exp.number:length(names(r_input)))]
@@ -123,9 +123,9 @@ mvmr <- function(r_input, gencov, weights) {
   sebetas <- r_input[, (exp.number + 4):length(r_input)]
 
   #Generates the sigma2xj values for each exposure
-  for (i in 1:exp.number) {
+  for (i in seq_len(exp.number)) {
     se.temp <- as.matrix(sebetas[, -i])
-    for (j in 1:(exp.number - 1)) {
+    for (j in seq_len((exp.number - 1))) {
       sigma2xj_dat[, i] <- sigma2xj_dat[, i] + (se.temp[, j]^2 * delta_mat[j, i]^2)
     }
     sigma2xj_dat[, i] <- sigma2xj_dat[, i] + sebetas[, i]^2 - gencov
@@ -136,11 +136,11 @@ mvmr <- function(r_input, gencov, weights) {
   Q_strength <- matrix(ncol = exp.number, nrow = 1, 0)
 
   #Generates the component of the Q statistic to be subtracted from the exposure estimates
-  for (i in 1:exp.number) {
+  for (i in seq_len(exp.number)) {
     betas <- r_input[, c(4:(3 + exp.number))]
     betas <- data.frame(betas[, -i])
     temp.sub <- 0
-    for (j in 1:(exp.number - 1)){
+    for (j in seq_len(exp.number - 1)){
       temp.sub <- temp.sub + (delta_mat[j, i] * betas[, j])
     }
 
@@ -158,7 +158,7 @@ mvmr <- function(r_input, gencov, weights) {
 
   # Generate Sigma^2_A values
   sigma2A <- r_input[, 3]^2
-  for (i in 1:exp.number) {
+  for (i in seq_len(exp.number)) {
     sigma2A <- sigma2A + (A[i]^2 * sebetas[, i]^2)
   }
 
@@ -173,7 +173,7 @@ mvmr <- function(r_input, gencov, weights) {
 
   #Generates the component of the Q statistic to be subtracted from the outcome estimates
   temp.sub2 <- 0
-  for (i in 1:exp.number) {
+  for (i in seq_len(exp.number)) {
     temp.sub2 <- temp.sub2 + (betas[, i] * A[i])
   }
 

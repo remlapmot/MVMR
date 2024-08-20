@@ -49,7 +49,7 @@ strhet_mvmr <- function(r_input, gencov) {
     , weights = Wj, data = r_input))$coef
 
   #Rename the regressors for ease of interpretation
-  for (i in 1:exp.number) {
+  for (i in seq_len(exp.number)) {
     dimnames(A)[[1]][i] <- paste0("exposure", i, collapse = "")
   }
 
