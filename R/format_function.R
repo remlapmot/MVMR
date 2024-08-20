@@ -29,13 +29,13 @@
 #corresponding instrument-exposure standard errors, and a vector of identification
 #numbers for the instruments.
 
-format_mvmr<-function(BXGs,BYG,seBXGs,seBYG,RSID){
+format_mvmr <- function(BXGs,BYG,seBXGs,seBYG,RSID){
 
   #If no instrument-identification vector is provided, a set of placeholder values
   #is produced. A warning is also given to indicate no values were provided
 
-  if(missing(RSID)) {
-    RSID<-seq(from=1,to=length(BYG),by=1)
+  if (missing(RSID)) {
+    RSID <- seq(from = 1, to = length(BYG), by = 1)
     warning("Missing SNP IDs; Generating placeholders")
   }
 
@@ -43,16 +43,14 @@ format_mvmr<-function(BXGs,BYG,seBXGs,seBYG,RSID){
   #they appear in the provided matrix, labeling each exposure with an X and
   #subsequent index number. The first exposure provided is labelled betaX1.
 
-  BXGs<-data.frame(BXGs)
-  seBXGs<-data.frame(seBXGs)
-  BYG<-data.frame(BYG)
-  seBYG<-data.frame(seBYG)
-  RSID<-data.frame(RSID)
+  BXGs <- data.frame(BXGs)
+  seBXGs <- data.frame(seBXGs)
+  BYG <- data.frame(BYG)
+  seBYG <- data.frame(seBYG)
+  RSID <- data.frame(RSID)
 
-
-
-  for(i in 1:ncol(BXGs)){
-    names(BXGs)[i]<-paste0("betaX",i,collapse=",")
+  for (i in 1:ncol(BXGs)) {
+    names(BXGs)[i] <- paste0("betaX", i, collapse = ",")
   }
 
   #This loop names each column of instrument-exposure standard errors in the order
@@ -60,23 +58,22 @@ format_mvmr<-function(BXGs,BYG,seBXGs,seBYG,RSID){
   #subsequent index number. The standard error for the first exposure provided
   #is labelled sebetaX1.
 
-  for(i in 1:ncol(seBXGs)){
-    names(seBXGs)[i]<-paste0("sebetaX",i,collapse=",")
+  for (i in 1:ncol(seBXGs)) {
+    names(seBXGs)[i] <- paste0("sebetaX", i, collapse = ",")
   }
 
   # A dataframe containing all the necessary information for performing
   #multivariable MR is created, placing the variables in a specific order.
 
-  dat<-cbind(RSID,BYG,seBYG,BXGs,seBXGs)
+  dat <- cbind(RSID, BYG, seBYG, BXGs, seBXGs)
 
   # The columns of the dataframe are renamed so as to be interpretable in
   #subsequent functions.
 
-  for(i in 1:ncol(dat)){
+  for (i in seq_len(ncol(dat))) {
 
-    if(i>1){
-      dat[,i]<-as.numeric(dat[,i])
-
+    if (i > 1) {
+      dat[,i] <- as.numeric(dat[, i])
     }
 
   }
