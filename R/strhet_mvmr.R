@@ -68,7 +68,7 @@ strhet_mvmr <- function(r_input, gencov) {
 
   valvec <- utils::combn(-100:100, c(exp.number - 1))
 
-  for (m in 1:exp.number) {
+  for (m in seq_len(exp.number)) {
 
     qmin <- function(a) {
 
@@ -82,9 +82,9 @@ strhet_mvmr <- function(r_input, gencov) {
         sebetas <- r_input[, (exp.number + 4):length(r_input)]
 
         #Generates the sigma2xj values for each exposure
-        for (i in 1:exp.number) {
+        for (i in seq_len(exp.number)) {
           se.temp <- as.matrix(sebetas[, -i])
-          for (j in 1:(exp.number - 1)) {
+          for (j in seq_len(exp.number - 1)) {
             sigma2xj_dat[, i] <- sigma2xj_dat[, i] + (se.temp[, j]^2 * delta_mat[j, i]^2)
           }
           sigma2xj_dat[, i] <- sigma2xj_dat[, i] + sebetas[, i]^2
@@ -99,16 +99,16 @@ strhet_mvmr <- function(r_input, gencov) {
         sebetas <- r_input[, (exp.number + 4):length(r_input)]
 
         #Generates the sigma2xj values for each exposure
-        for (i in 1:exp.number) {
+        for (i in seq_len(exp.number)) {
           se.temp <- as.matrix(sebetas[, -i])
-          for (j in 1:(exp.number - 1)) {
+          for (j in seq_len(exp.number - 1)) {
             sigma2xj_dat[, i] <- sigma2xj_dat[, i] + (se.temp[, j]^2 * delta_mat[j, i]^2)
           }
           sigma2xj_dat[, i] <- sigma2xj_dat[, i] + sebetas[, i]^2 - 0
 
-          for (k in 1:(exp.number - 1)) {
+          for (k in seq_len(exp.number - 1)) {
 
-            temp <- seq(1:exp.number)
+            temp <- seq_len(exp.number)
 
             temp <- temp[-i]
 
@@ -125,11 +125,11 @@ strhet_mvmr <- function(r_input, gencov) {
       }
 
       #Generates the component of the Q statistic to be subtracted from the exposure estimates
-      for (i in 1:exp.number) {
+      for (i in seq_len(exp.number)) {
         betas <- r_input[, c(4:(3 + exp.number))]
         betas <- data.frame(betas[, -i])
         temp.sub <- 0
-        for (j in 1:(exp.number-1)) {
+        for (j in seq_len(exp.number-1)) {
           temp.sub <- temp.sub + (delta_mat[j, i] * betas[, j])
         }
 
