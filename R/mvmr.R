@@ -200,7 +200,7 @@ mvmr <- function(r_input, gencov, weights) {
 
   cat("\n")
 
-  cat(paste(c("\nF-statistic:", " on"," and"), round(A_sum$fstatistic, 2), collapse = ""),
+  cat(paste(c("\nF-statistic:", " on", " and"), round(A_sum$fstatistic, 2), collapse = ""),
       "DF, p-value:",
       format.pval(stats::pf(A_sum$fstatistic[1L], A_sum$fstatistic[2L], A_sum$fstatistic[3L],
                      lower.tail = FALSE), digits = 3))
@@ -233,7 +233,7 @@ mvmr <- function(r_input, gencov, weights) {
 
   cat("\n")
 
-  cat(Q_valid, "on", length(r_input[, 2]) - exp.number - 1, "DF", ",", "p-value:" , Q_chiValid)
+  cat(Q_valid, "on", length(r_input[, 2]) - exp.number - 1, "DF", ",", "p-value:", Q_chiValid)
 
   cat("\n")
 
