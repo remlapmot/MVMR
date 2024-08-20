@@ -21,7 +21,7 @@ row numbers reference ordered exposures.
 }
 \examples{
 \dontrun{
-phenocov_mvmr(Pcov, summarydata[,c(3,4)])
+phenocov_mvmr(Pcov, summarydata[, c(3, 4)])
 }
 }
 \references{
