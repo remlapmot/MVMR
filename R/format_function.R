@@ -29,7 +29,7 @@
 #corresponding instrument-exposure standard errors, and a vector of identification
 #numbers for the instruments.
 
-format_mvmr <- function(BXGs,BYG,seBXGs,seBYG,RSID){
+format_mvmr <- function(BXGs, BYG, seBXGs, seBYG, RSID) {
 
   #If no instrument-identification vector is provided, a set of placeholder values
   #is produced. A warning is also given to indicate no values were provided
@@ -49,7 +49,7 @@ format_mvmr <- function(BXGs,BYG,seBXGs,seBYG,RSID){
   seBYG <- data.frame(seBYG)
   RSID <- data.frame(RSID)
 
-  for (i in 1:ncol(BXGs)) {
+  for (i in seq_len(ncol(BXGs))) {
     names(BXGs)[i] <- paste0("betaX", i, collapse = ",")
   }
 
@@ -58,7 +58,7 @@ format_mvmr <- function(BXGs,BYG,seBXGs,seBYG,RSID){
   #subsequent index number. The standard error for the first exposure provided
   #is labelled sebetaX1.
 
-  for (i in 1:ncol(seBXGs)) {
+  for (i in seq_len(ncol(seBXGs))) {
     names(seBXGs)[i] <- paste0("sebetaX", i, collapse = ",")
   }
 
@@ -73,7 +73,7 @@ format_mvmr <- function(BXGs,BYG,seBXGs,seBYG,RSID){
   for (i in seq_len(ncol(dat))) {
 
     if (i > 1) {
-      dat[,i] <- as.numeric(dat[, i])
+      dat[, i] <- as.numeric(dat[, i])
     }
 
   }
