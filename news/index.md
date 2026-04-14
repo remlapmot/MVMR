@@ -1,5 +1,16 @@
 # Changelog
 
+## MVMR 0.4.4
+
+- Implement some optimizations.
+
+## MVMR 0.4.3
+
+- The
+  [`snpcov_mvmr()`](https://wspiller.github.io/MVMR/reference/snpcov_mvmr.md)
+  function accidentally omitted intercepts from its regressions of
+  exposure on genotype. This has been fixed.
+
 ## MVMR 0.4.2
 
 - The
