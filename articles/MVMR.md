@@ -8,7 +8,7 @@ exposures on an outcome using genetic variants as instruments. The
 `MVMR` R package facilitates estimation of causal effects using MVMR, as
 well as including a range of sensitivity analyses evaluating the
 underlying assumptions of the approach. The methods included in `MVMR`
-originate from Sanderson, Spiller, and Bowden (2021), available
+originate from Sanderson et al. (2021), available
 [here](https://doi.org/10.1002/sim.9133).
 
 ### Workflow
@@ -44,8 +44,9 @@ MVMR:
 4.  Corresponding standard errors for the gene-outcome associations.
 
 The data frame `rawdat_mvmr`, included in the `MVMR` package shows an
-example of such data obtained from MRBase. When data is extracted from
-MRBase or using the TwoSampleMR R package, the
+example of such data obtained from MRBase (now
+[OpenGWAS](https://opengwas.io/)). When data is extracted from MRBase or
+using the TwoSampleMR R package, the
 [`mrmvinput_to_mvmr_format()`](https://wspiller.github.io/MVMR/reference/mrmvinput_to_mvmr_format.md)
 function can be used to convert the data to the `MVMR` data format. This
 specifically requires gene-exposure associations for all included SNPs,
@@ -55,12 +56,13 @@ lipoprotein cholesterol (HDL-C), and triglycerides (Trg) have been
 selected as exposures, while systolic blood pressure (SBP) is the
 outcome of interest. Here the suffix `_beta` is used to denote
 association estimates, while `_se` denotes standard errors. Please note
-that the `MVMR` can take an arbirtary number of exposures (greater than
+that the `MVMR` can take an arbitrary number of exposures (greater than
 1), and that three exposures have been selected purely for illustration.
 
 The first 6 rows of `rawdat_mvmr` are:
 
 ``` r
+
 library(MVMR)
 head(rawdat_mvmr)
 #>   LDL_beta HDL_beta Trg_beta LDL_se HDL_se Trg_se    SBP_beta     SBP_se
@@ -89,10 +91,12 @@ Biobank](https://www.nature.com/articles/ng.3768).
 ### Estimating pairwise covariances between SNP associations
 
 The MVMR approach requires pairwise covariances between an instrument
-and pairs of exposures to be known across all SNPs for testing and
+and pairs of exposures to be estimated across all SNPs for testing and
 sensitivity analyses. However, this is often not reported in published
 GWAS analyses. Before continuing with MVMR it is therefore **necessary**
-to select one of the following three solutions:
+to select one of the following solutions. Further details are given in
+the [estimating phenotypic correlations
+vignette](https://wspiller.github.io/MVMR/articles/estimating-phenotypic-correlations.md).
 
 1.  Estimate the covariance terms using individual level data
 
@@ -101,18 +105,26 @@ to select one of the following three solutions:
     [`snpcov_mvmr()`](https://wspiller.github.io/MVMR/reference/snpcov_mvmr.md)
     function can be used to calculate the necessary covariance terms.
 
-2.  Estimate the covariance terms using phenotypic correlation between
-    exposures. an estimate of the correlation between the (phenotypic)
-    exposures is available, the
+2.  Obtain an estimate of the covariance using the full GWAS summary
+    statistics. This estimates the phenotypic correlation, weighted by
+    the sample overlap from the SNPs that are null for both exposures.
+    The
+    [`phenocov_mvmr()`](https://wspiller.github.io/MVMR/reference/phenocov_mvmr.md)
+    function can then be used to estimate the necessary covariance
+    terms.
+
+3.  Estimate the covariance terms using phenotypic correlation between
+    exposures. If an estimate of the correlation between the
+    (phenotypic) exposures is available, the
     [`phenocov_mvmr()`](https://wspiller.github.io/MVMR/reference/phenocov_mvmr.md)
     function can be used to provide an approximation for the necessary
     covariance terms. This function takes the phenotypic correlation
     between the exposures and the standard error of the SNP-exposure
     betas as inputs.
 
-3.  Obtain gene-exposure associations from non-overlapping samples.
+4.  Obtain gene-exposure associations from non-overlapping samples.
 
-    If gene-exposure associations are estimated in seperate
+    If gene-exposure associations are estimated in separate
     non-overlapping samples, then the covariances will be zero by
     design. It is therefore not necessary to calculate the set of
     covariances, although this approach can be difficult to apply due to
@@ -124,11 +136,11 @@ or
 [`phenocov_mvmr()`](https://wspiller.github.io/MVMR/reference/phenocov_mvmr.md)
 functions, a set of covariance matrices will be produced equal to the
 number of SNPs used in estimation. By saving this output as an object,
-it is possible to use this information in downstream senstivity analyses
-and assumption testing. As the
+it is possible to use this information in downstream sensitivity
+analyses and assumption testing. As the
 [`phenocov_mvmr()`](https://wspiller.github.io/MVMR/reference/phenocov_mvmr.md)
 function requires gene-exposure standard errors, it can be useful to
-estimate the covariance matrices after initially formatiing the data. An
+estimate the covariance matrices after initially formatting the data. An
 illustrative example is provided in step 6, creating an object `Xcovmat`
 using the
 [`phenocov_mvmr()`](https://wspiller.github.io/MVMR/reference/phenocov_mvmr.md)
@@ -162,6 +174,7 @@ Using the previous data `rawdat.mvmr`, we can format the data using the
 following command:
 
 ``` r
+
 F.data <- format_mvmr(
   BXGs = rawdat_mvmr[, c(1, 2, 3)],
   BYG = rawdat_mvmr[, 7],
@@ -243,6 +256,7 @@ strength of the instruments for each exposure using the following
 command
 
 ``` r
+
 sres <- strength_mvmr(r_input = F.data, gencov = 0)
 #> Warning in strength_mvmr(r_input = F.data, gencov = 0): Covariance between
 #> effect of genetic variants on each exposure not specified. Fixing covariance at
@@ -262,6 +276,7 @@ same sample. Using a random phenotypic correlation matrix, conditional
 F-statistics can be calculated as
 
 ``` r
+
 mvmrcormatrix <- matrix(c(1, -0.1, -0.05, -0.1, 1, 0.2, -0.05, 0.2, 1), nrow = 3, ncol = 3)
 Xcovmat <- phenocov_mvmr(mvmrcormatrix, F.data[, 7:9])
 sres2 <- strength_mvmr(r_input = F.data, gencov = Xcovmat)
@@ -294,6 +309,7 @@ the
 `r_input` and `gencov`.
 
 ``` r
+
 pres <- pleiotropy_mvmr(r_input = F.data, gencov = 0)
 #> Warning in pleiotropy_mvmr(r_input = F.data, gencov = 0): Covariance between
 #> effect of genetic variants on each exposure not specified. Fixing covariance at
@@ -305,6 +321,7 @@ pres <- pleiotropy_mvmr(r_input = F.data, gencov = 0)
 And with the example covariance matrices from Step 3:
 
 ``` r
+
 pres <- pleiotropy_mvmr(r_input = F.data, gencov = Xcovmat)
 #> Q-Statistic for instrument validity:
 #> 682.843 on 141 DF , p-value: 5.36533e-72
@@ -320,9 +337,8 @@ outcome. This is performed using the
 function as shown below:
 
 ``` r
+
 res <- ivw_mvmr(r_input = F.data)
-#> Warning in ivw_mvmr(r_input = F.data): Covariance between effect of genetic
-#> variants on each exposure not specified. Fixing covariance at 0.
 #> 
 #> Multivariable MR
 #> 
@@ -349,14 +365,15 @@ performed using the
 function.
 
 ``` r
+
 res1 <- qhet_mvmr(F.data, mvmrcormatrix, CI = FALSE, iterations = 100)
 #> Warning in qhet_mvmr(F.data, mvmrcormatrix, CI = FALSE, iterations = 100):
 #> qhet_mvmr() is currently undergoing development.
 res1
 #>            Effect Estimates
-#> Exposure 1    -0.0264865644
-#> Exposure 2     0.0094372624
-#> Exposure 3     0.0002575009
+#> Exposure 1     -0.024122657
+#> Exposure 2      0.008801407
+#> Exposure 3      0.008303278
 ```
 
 It is important to highlight that the phenotypic covariance matrix is

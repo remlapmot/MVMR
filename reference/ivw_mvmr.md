@@ -20,15 +20,14 @@ ivw_mvmr(r_input, gencov = 0)
 
 - gencov:
 
-  Calculating heterogeneity statistics requires the covariance between
-  the effect of the genetic variants on each exposure to be known. This
-  can either be estimated from individual level data, be assumed to be
-  zero, or fixed at zero using non-overlapping samples of each exposure
-  GWAS. A value of `0` is used by default.
+  Retained for interface consistency with the other MVMR functions. The
+  IVW point estimates do not depend on the covariance between the effect
+  of the genetic variants on each exposure, so this argument is not used
+  by `ivw_mvmr()`. A value of `0` is used by default.
 
 ## Value
 
-An dataframe containing MVMR results, including estimated coefficients,
+A dataframe containing MVMR results, including estimated coefficients,
 their standard errors, t-statistics, and corresponding (two-sided)
 p-values.
 
@@ -54,7 +53,6 @@ r_input <- format_mvmr(
   RSID = rawdat_mvmr$SNP
 )
 ivw_mvmr(r_input)
-#> Warning: Covariance between effect of genetic variants on each exposure not specified. Fixing covariance at 0.
 #> 
 #> Multivariable MR
 #> 

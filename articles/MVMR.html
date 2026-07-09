@@ -6,9 +6,10 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <title>Multivariable MR Tutorial • MVMR</title>
-<script src="../lightswitch.js"></script><script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<link href="../deps/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet">
-<script src="../deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
+<!-- katex math --><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css" integrity="sha384-nB0miv6/jRmo5UMMR1wu3Gz6NLsoTkbqJghGIsx//Rlm+ZU03BU6SQNC66uf4l5+" crossorigin="anonymous">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js" integrity="sha384-7zkQWkzuo3B5mTepMUcHkMB5jZaolc2xDwL6VFqjFALcbeS9Ggm/Yr2r3Dy4lfFg" crossorigin="anonymous"></script><script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js" integrity="sha384-43gviWU0YVjaDtb/GhzOouOXtZMP/7XUzwPTstBeZFe/+rCMvRwr4yROQP43s0Xk" crossorigin="anonymous" onload="renderMathInElement(document.body);"></script><script src="../katex-auto.js"></script><script src="../lightswitch.js"></script><script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<link href="../deps/bootstrap-5.3.8/bootstrap.min.css" rel="stylesheet">
+<script src="../deps/bootstrap-5.3.8/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
 <link href="../deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet">
 <script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><link href="../extra.css" rel="stylesheet">
 <meta property="og:title" content="Multivariable MR Tutorial">
@@ -21,7 +22,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">MVMR</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.4.4</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.4.8</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -32,6 +33,12 @@
       <ul class="navbar-nav me-auto">
 <li class="active nav-item"><a class="nav-link" href="../articles/MVMR.html">Get started</a></li>
 <li class="nav-item"><a class="nav-link" href="../reference/index.html">Reference</a></li>
+<li class="nav-item dropdown">
+  <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
+  <ul class="dropdown-menu" aria-labelledby="dropdown-articles">
+<li><a class="dropdown-item" href="../articles/estimating-phenotypic-correlations.html">Estimating phenotypic correlations</a></li>
+  </ul>
+</li>
 <li class="nav-item"><a class="nav-link" href="../news/index.html">Changelog</a></li>
       </ul>
 <ul class="navbar-nav">
@@ -82,8 +89,7 @@ multiple exposures on an outcome using genetic variants as instruments.
 The <code>MVMR</code> R package facilitates estimation of causal effects
 using MVMR, as well as including a range of sensitivity analyses
 evaluating the underlying assumptions of the approach. The methods
-included in <code>MVMR</code> originate from <span class="citation">Sanderson, Spiller, and Bowden (2021)</span>, available
-<a href="https://doi.org/10.1002/sim.9133" class="external-link">here</a>.</p>
+included in <code>MVMR</code> originate from <span class="citation">Sanderson et al. (2021)</span>, available <a href="https://doi.org/10.1002/sim.9133" class="external-link">here</a>.</p>
 <div class="section level3">
 <h3 id="workflow">Workflow<a class="anchor" aria-label="anchor" href="#workflow"></a>
 </h3>
@@ -98,10 +104,12 @@ included in <code>MVMR</code> originate from <span class="citation">Sanderson, S
 </ol>
 <p>Each of these steps are shown in the figure below, highlighting the R
 function used for each step.</p>
+<div style="text-align: center;">
 <div class="figure" style="text-align: center">
 <img src="png/workflow.png" class="r-plt" alt="Figure showing the workflow of an MVMR analysis." width="600px"><p class="caption">
 The workflow of an MVMR analysis.
 </p>
+</div>
 </div>
 </div>
 </div>
@@ -121,19 +129,20 @@ associations.</p></li>
 </ol>
 <p>The data frame <code>rawdat_mvmr</code>, included in the
 <code>MVMR</code> package shows an example of such data obtained from
-MRBase. When data is extracted from MRBase or using the TwoSampleMR R
-package, the <code><a href="../reference/mrmvinput_to_mvmr_format.html">mrmvinput_to_mvmr_format()</a></code> function can be
-used to convert the data to the <code>MVMR</code> data format. This
-specifically requires gene-exposure associations for all included SNPs,
-gene-outcome associations, and corresponding standard errors. In this
-case, low-density lipoprotein cholesterol (LDL-C), high-density
-lipoprotein cholesterol (HDL-C), and triglycerides (Trg) have been
-selected as exposures, while systolic blood pressure (SBP) is the
-outcome of interest. Here the suffix <code>_beta</code> is used to
-denote association estimates, while <code>_se</code> denotes standard
-errors. Please note that the <code>MVMR</code> can take an arbirtary
-number of exposures (greater than 1), and that three exposures have been
-selected purely for illustration.</p>
+MRBase (now <a href="https://opengwas.io/" class="external-link">OpenGWAS</a>). When data is
+extracted from MRBase or using the TwoSampleMR R package, the
+<code><a href="../reference/mrmvinput_to_mvmr_format.html">mrmvinput_to_mvmr_format()</a></code> function can be used to convert
+the data to the <code>MVMR</code> data format. This specifically
+requires gene-exposure associations for all included SNPs, gene-outcome
+associations, and corresponding standard errors. In this case,
+low-density lipoprotein cholesterol (LDL-C), high-density lipoprotein
+cholesterol (HDL-C), and triglycerides (Trg) have been selected as
+exposures, while systolic blood pressure (SBP) is the outcome of
+interest. Here the suffix <code>_beta</code> is used to denote
+association estimates, while <code>_se</code> denotes standard errors.
+Please note that the <code>MVMR</code> can take an arbitrary number of
+exposures (greater than 1), and that three exposures have been selected
+purely for illustration.</p>
 <p>The first 6 rows of <code>rawdat_mvmr</code> are:</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/WSpiller/MVMR" class="external-link">MVMR</a></span><span class="op">)</span></span>
@@ -162,11 +171,12 @@ Biobank</a>.</p>
 <h3 id="estimating-pairwise-covariances-between-snp-associations">Estimating pairwise covariances between SNP associations<a class="anchor" aria-label="anchor" href="#estimating-pairwise-covariances-between-snp-associations"></a>
 </h3>
 <p>The MVMR approach requires pairwise covariances between an instrument
-and pairs of exposures to be known across all SNPs for testing and
+and pairs of exposures to be estimated across all SNPs for testing and
 sensitivity analyses. However, this is often not reported in published
 GWAS analyses. Before continuing with MVMR it is therefore
-<strong>necessary</strong> to select one of the following three
-solutions:</p>
+<strong>necessary</strong> to select one of the following solutions.
+Further details are given in the <a href="estimating-phenotypic-correlations.html">estimating phenotypic
+correlations vignette</a>.</p>
 <ol style="list-style-type: decimal">
 <li>
 <p>Estimate the covariance terms using individual level data</p>
@@ -174,8 +184,13 @@ solutions:</p>
 estimates were obtained, the <code><a href="../reference/snpcov_mvmr.html">snpcov_mvmr()</a></code> function can be
 used to calculate the necessary covariance terms.</p>
 </li>
+<li><p>Obtain an estimate of the covariance using the full GWAS summary
+statistics. This estimates the phenotypic correlation, weighted by the
+sample overlap from the SNPs that are null for both exposures. The
+<code><a href="../reference/phenocov_mvmr.html">phenocov_mvmr()</a></code> function can then be used to estimate the
+necessary covariance terms.</p></li>
 <li><p>Estimate the covariance terms using phenotypic correlation
-between exposures. an estimate of the correlation between the
+between exposures. If an estimate of the correlation between the
 (phenotypic) exposures is available, the <code><a href="../reference/phenocov_mvmr.html">phenocov_mvmr()</a></code>
 function can be used to provide an approximation for the necessary
 covariance terms. This function takes the phenotypic correlation between
@@ -184,7 +199,7 @@ inputs.</p></li>
 <li>
 <p>Obtain gene-exposure associations from non-overlapping
 samples.</p>
-<p>If gene-exposure associations are estimated in seperate
+<p>If gene-exposure associations are estimated in separate
 non-overlapping samples, then the covariances will be zero by design. It
 is therefore not necessary to calculate the set of covariances, although
 this approach can be difficult to apply due to a lack of suitable
@@ -195,10 +210,10 @@ sources of data.</p>
 <code><a href="../reference/snpcov_mvmr.html">snpcov_mvmr()</a></code> or <code><a href="../reference/phenocov_mvmr.html">phenocov_mvmr()</a></code> functions, a
 set of covariance matrices will be produced equal to the number of SNPs
 used in estimation. By saving this output as an object, it is possible
-to use this information in downstream senstivity analyses and assumption
-testing. As the <code><a href="../reference/phenocov_mvmr.html">phenocov_mvmr()</a></code> function requires
-gene-exposure standard errors, it can be useful to estimate the
-covariance matrices after initially formatiing the data. An illustrative
+to use this information in downstream sensitivity analyses and
+assumption testing. As the <code><a href="../reference/phenocov_mvmr.html">phenocov_mvmr()</a></code> function
+requires gene-exposure standard errors, it can be useful to estimate the
+covariance matrices after initially formatting the data. An illustrative
 example is provided in step 6, creating an object <code>Xcovmat</code>
 using the <code><a href="../reference/phenocov_mvmr.html">phenocov_mvmr()</a></code> function.</p>
 </div>
@@ -375,8 +390,6 @@ the outcome. This is performed using the <code><a href="../reference/ivw_mvmr.ht
 function as shown below:</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">res</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/ivw_mvmr.html">ivw_mvmr</a></span><span class="op">(</span>r_input <span class="op">=</span> <span class="va">F.data</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Warning in ivw_mvmr(r_input = F.data): Covariance between effect of genetic</span></span>
-<span><span class="co">#&gt; variants on each exposure not specified. Fixing covariance at 0.</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Multivariable MR</span></span>
 <span><span class="co">#&gt; </span></span>
@@ -405,9 +418,9 @@ be performed using the <code><a href="../reference/qhet_mvmr.html">qhet_mvmr()</
 <span><span class="co">#&gt; qhet_mvmr() is currently undergoing development.</span></span>
 <span><span class="va">res1</span></span>
 <span><span class="co">#&gt;            Effect Estimates</span></span>
-<span><span class="co">#&gt; Exposure 1    -0.0264865644</span></span>
-<span><span class="co">#&gt; Exposure 2     0.0094372624</span></span>
-<span><span class="co">#&gt; Exposure 3     0.0002575009</span></span></code></pre></div>
+<span><span class="co">#&gt; Exposure 1     -0.024122657</span></span>
+<span><span class="co">#&gt; Exposure 2      0.008801407</span></span>
+<span><span class="co">#&gt; Exposure 3      0.008303278</span></span></code></pre></div>
 <p>It is important to highlight that the phenotypic covariance matrix is
 used as an input, and not the set of estimated covariance matrices which
 previously formed the <code>gencov</code> argument. It should also be
@@ -420,7 +433,7 @@ above.</p>
 <div class="section level2 unnumbered">
 <h2 class="unnumbered" id="references">References<a class="anchor" aria-label="anchor" href="#references"></a>
 </h2>
-<div id="refs" class="references csl-bib-body hanging-indent" entry-spacing="0">
+<div id="refs" class="references csl-bib-body hanging-indent">
 <div id="ref-sanderson-statsmed-2021" class="csl-entry">
 Sanderson, E., W. Spiller, and J. Bowden. 2021. <span>“<span class="nocase">Testing and correcting for weak and pleiotropic
 instruments in two-sample multivariable Mendelian
@@ -440,7 +453,7 @@ randomization</span>.”</span> <em>Statistics in Medicine</em> 40 (25):
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.0.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.1.</p>
 </div>
 
     </footer>
